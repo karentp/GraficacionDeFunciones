@@ -1,9 +1,10 @@
 """Main module."""
+#!/usr/bin/python3
 
 import argparse
 import sys
-from sympy import * # NOQA
-from funciones import *
+from sympy import parse_expr # NOQA
+from funciones import leer_linea, graficar_funcion, determinar_derivadas
 
 if __name__ == '__main__':
 
@@ -17,14 +18,15 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--guardar',
-        '-g',     
+        '-g',
+        default="",
     )
     parser.add_argument(
         '--limiteinferior',
         '-i',
         type=float,
         required='-t' not in sys.argv
-   
+
     )
 
     parser.add_argument(
@@ -32,7 +34,7 @@ if __name__ == '__main__':
         '-s',
         type=float,
         required='-t' not in sys.argv
-  
+
     )
 
     parser.add_argument(
@@ -52,7 +54,7 @@ if __name__ == '__main__':
         '--derivadas',
         '-d',
         type=int,
-        default=0,   
+        default=0,
     )
 
     parser.add_argument(
@@ -74,9 +76,14 @@ if __name__ == '__main__':
                 sys.exit()
 
             try:
-                derivadas = int(input("Número de derivadas por graficar:\n" +
-                                      "0 : ninguna, 1: primera derivada, " +
-                                      "2: segunda derivada: "))
+                derivadas = (input("Número de derivadas por graficar:\n" +
+                                   "0 : ninguna, 1: primera derivada, " +
+                                   "2: segunda derivada: "))
+                if (derivadas.isdigit() is True):
+                    derivadas = int(derivadas)
+                else:
+                    derivadas = 0
+
             except ValueError:
                 print("\nError: "
                       + "Las derivadas deben ser entero 0,1,2 o dejarlo vacio")
@@ -106,7 +113,7 @@ if __name__ == '__main__':
 
             try:
                 cifras_significativas = int(input("¿Cuántas cifras " +
-                                                  "significativas desea: "))
+                                                  "significativas desea?: "))
                 assert cifras_significativas > 1
             except ValueError:
                 print("\n Error: las cifras significativas deben ser enteros")
@@ -115,10 +122,10 @@ if __name__ == '__main__':
                 print("\nError:las cifras significativas deben ser mayor a 1")
                 continue
 
-            archivo_guardar = input("Ingrese el archivo donde se guardará" +
+            archivo_guardar = input("Ingrese el archivo donde se guardara" +
                                     "la gráfica (opcional): ")
             break
-       
+
     else:
 
         archivo_entrada = args.archivoentrada
@@ -128,7 +135,7 @@ if __name__ == '__main__':
         except SyntaxError:
             print("La expresión matemática es invalida")
             sys.exit()
-       
+
         derivadas = int(args.derivadas)
         try:
             limite_inferior = float(args.limiteinferior)
@@ -146,20 +153,18 @@ if __name__ == '__main__':
         except AssertionError:
             print("\n Error: el paso debe ser mayor a 0 y menor al rango de x")
             sys.exit()
- 
+
         try:
             cifras_significativas = int(args.cifrassignificativas)
             assert cifras_significativas > 1
         except AssertionError:
             print("\n Error: las cifras significativas deben ser mayor a 1")
             sys.exit()
-             
+
         archivo_guardar = args.guardar
- 
+
     lista_funciones = determinar_derivadas(derivadas, yfuncion)
-    for i in lista_funciones:
-        print (i)
-    
+
     graficar_funcion(limite_superior, limite_inferior,
-                     paso, lista_funciones, cifras_significativas)
- 
+                     paso, lista_funciones, cifras_significativas,
+                     archivo_guardar)
