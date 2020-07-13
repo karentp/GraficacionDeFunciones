@@ -5,7 +5,7 @@ el programa principal
 """
 
 import sys
-from numpy import linspace
+from numpy import linspace, arange
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from sympy import * # NOQA
@@ -29,7 +29,7 @@ def leer_linea(path):
         sys.exit()
 
 
-def graficar_funcion(superior, inferior, paso, funciones, cifras):
+def graficar_funcion(superior, inferior, paso, funciones, cifras, path_guardar):
     """
 
     Función que realiza las graficas de la funcion y, y sus derivadas
@@ -49,29 +49,47 @@ def graficar_funcion(superior, inferior, paso, funciones, cifras):
     codominio_funciony = [funciones[0].subs(x, valor).evalf(cifras)
                           for valor in dominio_funciony]
     
+    plt.rcParams["font.family"] = "serif"
     fig = plt.figure(figsize=(10,10))
     ax1 = fig.add_subplot(len(funciones),1, 1)
-    ax1.plot(dominio_funciony, codominio_funciony)
+    ax1.plot(dominio_funciony, codominio_funciony, color='maroon', linewidth = 2)
+    ax1.set(title="Función y ", xlabel="x", ylabel="y")
+    ax1.legend([str(funciones[0])])
+    ax1.xaxis.set_ticks(arange(inferior, superior+1, paso))
+    ax1.set_facecolor('xkcd:pale gray')
 
     if (len(funciones) > 1):
         codominio_funcion_prima = [funciones[1].subs(x, valor).evalf(cifras)
                                    for valor in dominio_funciony]
         ax2 = fig.add_subplot(len(funciones),1, 2)
-        ax2.plot(dominio_funciony, codominio_funcion_prima)          
+        ax2.plot(dominio_funciony, codominio_funcion_prima, color='navy', linewidth = 2)
+        ax2.set(title="Función primera derivada de y ", xlabel="x", ylabel="y")
+        ax2.legend([str(funciones[1])])
+        ax2.xaxis.set_ticks(arange(inferior, superior+1, paso))
+        ax2.set_facecolor('xkcd:pale gray') 
 
     if (len(funciones) > 2):
         codominio_prima_prima = [funciones[2].subs(x, valor).evalf(cifras)
                                  for valor in dominio_funciony]
-        ax2 = fig.add_subplot(len(funciones),1, 3)
-        ax2.plot(dominio_funciony, codominio_prima_prima) 
+        ax3 = fig.add_subplot(len(funciones),1, 3)
+        ax3.plot(dominio_funciony, codominio_prima_prima, 
+                 color='green', linewidth = 2)
+        ax3.legend([str(funciones[2])])
+        ax3.set(title="Función segunda derivada de y ", xlabel="x", ylabel="y")
+        ax3.xaxis.set_ticks(arange(inferior, superior+1, paso))
+        ax3.set_facecolor('xkcd:pale gray') 
+       
+    fig.tight_layout(pad=3.0)
 
-    plt.savefig("foo.png")
-    plt.show()
+    if (path_guardar != " "):
+        plt.savefig(path_guardar)
    
+    plt.show()
+  
 
-graficar_funcion(10, 0, 2, 
+graficar_funcion(10, 0, 3, 
                    [parse_expr("x**2"), parse_expr("x+3"),
-                    parse_expr("x**3")], 2)
+                    parse_expr("x**3")], 2, " ")
 
 
 def determinar_derivadas(orden, funciony):
@@ -101,4 +119,3 @@ def determinar_derivadas(orden, funciony):
     return funciones
 
 
-# determinar_derivadas(2,'x**2')
