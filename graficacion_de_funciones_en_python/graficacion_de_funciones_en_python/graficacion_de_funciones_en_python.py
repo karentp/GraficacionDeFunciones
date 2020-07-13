@@ -24,7 +24,7 @@ if __name__ == '__main__':
         '-i',
         type=float,
         required='-t' not in sys.argv
-    
+   
     )
 
     parser.add_argument(
@@ -32,7 +32,7 @@ if __name__ == '__main__':
         '-s',
         type=float,
         required='-t' not in sys.argv
-    
+  
     )
 
     parser.add_argument(
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         '-p',
         type=int,
         required='-t' not in sys.argv
- 
+
     )
     parser.add_argument(
         '--cifrassignificativas',
@@ -71,6 +71,7 @@ if __name__ == '__main__':
                     input("Ingrese la función de y, a graficar: "))
             except SyntaxError:
                 print("La expresión matemática es invalida")
+                sys.exit()
 
             try:
                 derivadas = int(input("Número de derivadas por graficar:\n" +
@@ -117,7 +118,7 @@ if __name__ == '__main__':
             archivo_guardar = input("Ingrese el archivo donde se guardará" +
                                     "la gráfica (opcional): ")
             break
-        
+       
     else:
 
         archivo_entrada = args.archivoentrada
@@ -127,7 +128,7 @@ if __name__ == '__main__':
         except SyntaxError:
             print("La expresión matemática es invalida")
             sys.exit()
-        
+       
         derivadas = int(args.derivadas)
         try:
             limite_inferior = float(args.limiteinferior)
@@ -145,14 +146,20 @@ if __name__ == '__main__':
         except AssertionError:
             print("\n Error: el paso debe ser mayor a 0 y menor al rango de x")
             sys.exit()
-     
+ 
         try:
             cifras_significativas = int(args.cifrassignificativas)
             assert cifras_significativas > 1
         except AssertionError:
             print("\n Error: las cifras significativas deben ser mayor a 1")
             sys.exit()
-               
+             
         archivo_guardar = args.guardar
  
-    print("holi")
+    lista_funciones = determinar_derivadas(derivadas, yfuncion)
+    for i in lista_funciones:
+        print (i)
+    
+    graficar_funcion(limite_superior, limite_inferior,
+                     paso, lista_funciones, cifras_significativas)
+ 
